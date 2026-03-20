@@ -15,26 +15,61 @@ background:#eef2f6;
 margin:0;
 }
 
-/* FILTER BOX */
-.filter-wrapper{padding:20px;}
+/* FILTER FULL WIDTH */
+.filter-wrapper{
+padding:20px;
+}
+
 .filter-box{
-background:#fff;
+background:#ffffff;
 border-radius:14px;
 padding:16px 20px;
 box-shadow:0 6px 14px rgba(0,0,0,0.06);
+
 display:flex;
+justify-content:space-between;
 align-items:flex-end;
+width:100%;
+}
+
+.filter-left{
+display:flex;
 gap:20px;
-width:fit-content;
 }
-.filter-item{display:flex;flex-direction:column}
-.filter-item label{font-size:12px;color:#64748b;font-weight:600}
-.filter-item input,.filter-item select{
-padding:8px;border-radius:8px;border:1px solid #cbd5e1;background:#f8fafc;
+
+.filter-item{
+display:flex;
+flex-direction:column;
+gap:4px;
 }
-.filter-actions{display:flex;gap:10px}
+
+.filter-item label{
+font-size:12px;
+color:#64748b;
+font-weight:600;
+}
+
+.filter-item input,
+.filter-item select{
+padding:8px 10px;
+border-radius:8px;
+border:1px solid #cbd5e1;
+background:#f8fafc;
+}
+
+.filter-actions{
+display:flex;
+gap:10px;
+}
+
 .filter-actions button{
-padding:8px 16px;border:none;border-radius:8px;background:#2D8A6D;color:#fff;font-weight:600;cursor:pointer;
+padding:8px 16px;
+border-radius:8px;
+border:none;
+background:#2D8A6D;
+color:#fff;
+font-weight:600;
+cursor:pointer;
 }
 
 /* REPORT */
@@ -83,29 +118,31 @@ td{padding:10px;text-align:center;border-bottom:1px solid #e5e7eb}
 
 <!-- FILTER -->
 <div class="filter-wrapper">
-<div class="filter-box">
+  <div class="filter-box">
 
-<div class="filter-item">
-<label>Date</label>
-<input type="date" id="date">
-</div>
+    <div class="filter-left">
+      <div class="filter-item">
+        <label>Date</label>
+        <input type="date" id="date">
+      </div>
 
-<div class="filter-item">
-<label>Shift</label>
-<select id="shift">
-<option>A</option>
-<option>B</option>
-<option>C</option>
-<option>Full Day</option>
-</select>
-</div>
+      <div class="filter-item">
+        <label>Shift</label>
+        <select id="shift">
+          <option>A</option>
+          <option>B</option>
+          <option>C</option>
+          <option>Full Day</option>
+        </select>
+      </div>
+    </div>
 
-<div class="filter-actions">
-<button onclick="generate()">Generate</button>
-<button onclick="downloadPDF()">Export PDF</button>
-</div>
+    <div class="filter-actions">
+      <button onclick="generate()">Generate</button>
+      <button onclick="downloadPDF()">Export PDF</button>
+    </div>
 
-</div>
+  </div>
 </div>
 
 <!-- REPORT -->
