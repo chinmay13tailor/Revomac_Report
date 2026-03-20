@@ -323,20 +323,29 @@ Plotly.newPlot("prodChart",[{
 x:rows.map(r=>new Date(r.ts)),
 y:rows.map(r=>r.Production_Hourly),
 mode:"lines+markers",
-line:{color:"#2D8A6D"},
+line:{color:"#2D8A6D", width:3},
+
+marker:{
+size:8   // 🔥 important for hover
+},
+
 name:"Production",
 
 hovertemplate:
-"Time: %{x}<br>" +
+"<b>%{x}</b><br>" +
 "Production: %{y}<extra></extra>"
 
 }],{
-title:{
-text:"Production Trend",
-font:{size:16}
-},
+title:{text:"Production Trend",font:{size:16}},
 margin:{t:40},
-hovermode:"x unified"
+
+hovermode:"closest",   // 🔥 fix hover issue
+
+hoverlabel:{
+bgcolor:"#111",
+font:{color:"#fff"}
+}
+
 },{
 displayModeBar:false
 })
@@ -345,20 +354,29 @@ Plotly.newPlot("energyChart",[{
 x:rows.map(r=>new Date(r.ts)),
 y:rows.map(r=>r.Consumption_Hourly),
 mode:"lines+markers",
-line:{color:"#f59e0b"},
+line:{color:"#f59e0b", width:3},
+
+marker:{
+size:8
+},
+
 name:"Energy",
 
 hovertemplate:
-"Time: %{x}<br>" +
+"<b>%{x}</b><br>" +
 "Energy: %{y} kWh<extra></extra>"
 
 }],{
-title:{
-text:"Energy Consumption Trend",
-font:{size:16}
-},
+title:{text:"Energy Consumption Trend",font:{size:16}},
 margin:{t:40},
-hovermode:"x unified"
+
+hovermode:"closest",
+
+hoverlabel:{
+bgcolor:"#111",
+font:{color:"#fff"}
+}
+
 },{
 displayModeBar:false
 })
