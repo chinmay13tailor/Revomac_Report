@@ -82,18 +82,32 @@ border-top:4px solid #2D8A6D;
 
 .perf-row{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
 .perf-card{
-background:#fff;border-radius:16px;padding:16px;
+background:#fff;
+border-radius:16px;
+padding:16px;
 box-shadow:0 6px 14px rgba(0,0,0,0.05);
+
 position:relative;
-display:flex;justify-content:center;align-items:center;
+
+/* 🔥 CHANGE */
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
 }
 .perf-title{
-position:absolute;top:12px;left:16px;
-font-size:13px;color:#64748b;font-weight:600;
+position:absolute;
+top:12px;
+left:16px;
+font-size:13px;
+color:#64748b;
+font-weight:600;
+z-index:2;   /* 🔥 IMPORTANT */
 }
 .perf-chart{
 height:140px;
-width:100%;
+width:140px;
+margin-top:20px; /* label ke niche space */
 }
 .chart-card div{
 width:100%;
