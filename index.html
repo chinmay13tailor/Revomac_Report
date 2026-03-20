@@ -324,14 +324,22 @@ x:rows.map(r=>new Date(r.ts)),
 y:rows.map(r=>r.Production_Hourly),
 mode:"lines+markers",
 line:{color:"#2D8A6D"}
-}])
+}],{
+margin:{t:20}
+},{
+displayModeBar:false   // 🔥 remove toolbar
+})
 
 Plotly.newPlot("energyChart",[{
 x:rows.map(r=>new Date(r.ts)),
 y:rows.map(r=>r.Consumption_Hourly),
 mode:"lines+markers",
 line:{color:"#f59e0b"}
-}])  
+}],{
+margin:{t:20}
+},{
+displayModeBar:false
+}) 
 setTimeout(()=>{
 window.dispatchEvent(new Event('resize'));
 },300);
