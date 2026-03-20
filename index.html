@@ -289,7 +289,7 @@ document.getElementById("table").innerHTML += `
 <td>${r.Downtime_Hourly||0}</td>
 <td>${r.Idletime_Hourly||0}</td>
 <td>${r.Consumption_Hourly||0}</td>
-<td>${r.Performance_Hourly||0}%</td>
+<td>${Number(r.Performance_Hourly||0).toFixed(2)}%</td>
 </tr>`;
 })
 /* ===== DONUT GAUGES ===== */
