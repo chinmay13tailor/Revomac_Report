@@ -17,7 +17,8 @@ margin:2px;
 
 /* ===== PDF HEADER FOOTER ===== */
 #pdfHeader,#pdfFooter{display:none;}
-.pdf-mode #pdfHeader,.pdf-mode #pdfFooter{display:block;}
+.pdf-mode #pdfHeader,
+.pdf-mode #pdfFooter{display:block;}
 
 .pdf-header{
 background:#fff;
@@ -33,12 +34,9 @@ align-items:center;
 }
 .pdf-logo{height:50px;}
 .pdf-center{text-align:center;flex:1;}
-.pdf-center h2{margin:0;font-size:18px;}
-.pdf-center h3{margin:5px 0 0;font-size:16px;}
 .pdf-date{font-size:13px;margin-top:5px;}
 
-.pdf-footer{margin-top:15px;}
-.remarks-title{font-weight:600;margin-bottom:5px;}
+.pdf-footer{margin-top:20px;}
 .remarks-box{
 height:70px;
 border:2px dashed #94a3b8;
@@ -50,13 +48,12 @@ justify-content:space-between;
 margin-top:20px;
 }
 
-/* ORIGINAL CSS */
+/* ===== EXISTING CSS ===== */
 .filter-wrapper{padding:20px 20px 0 20px;}
 .filter-box{
-background:#ffffff;border-radius:14px;padding:16px 20px;
+background:#fff;border-radius:14px;padding:16px 20px;
 box-shadow:0 6px 14px rgba(0,0,0,0.06);
 display:flex;justify-content:space-between;align-items:flex-end;
-max-width:100%;
 }
 .filter-left{display:flex;gap:20px;}
 .filter-item{display:flex;flex-direction:column;gap:4px;}
@@ -70,17 +67,19 @@ padding:8px 16px;border-radius:8px;border:none;background:#2D8A6D;color:#fff;fon
 }
 
 .page{padding:20px}
+
 .kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
 .kpi{
 background:#fff;border-radius:14px;padding:16px;
 box-shadow:0 6px 14px rgba(0,0,0,0.05);
 border-top:4px solid #2D8A6D;
 }
-.unit{font-size:13px;color:#64748b;margin-left:4px;font-weight:500;}
+.unit{font-size:13px;color:#64748b;margin-left:4px;}
 .kpi-title{font-size:13px;color:#64748b}
 .kpi-value{font-size:26px;font-weight:700}
 
 .section-title{margin:25px 0 10px;font-weight:600}
+
 .perf-row{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
 .perf-card{
 background:#fff;border-radius:16px;padding:16px;
@@ -108,46 +107,43 @@ td{padding:10px;text-align:center;border-bottom:1px solid #e5e7eb}
 
 <!-- FILTER -->
 <div class="filter-wrapper">
-  <div class="filter-box">
-    <div class="filter-left">
-      <div class="filter-item">
-        <label>Date</label>
-        <input type="date" id="date">
-      </div>
-      <div class="filter-item">
-        <label>Shift</label>
-        <select id="shift">
-          <option>A</option>
-          <option>B</option>
-          <option>C</option>
-          <option>Full Day</option>
-        </select>
-      </div>
-    </div>
-    <div class="filter-actions">
-      <button onclick="generate()">Generate</button>
-      <button onclick="downloadPDF()">Export PDF</button>
-    </div>
-  </div>
+<div class="filter-box">
+<div class="filter-left">
+<div class="filter-item">
+<label>Date</label>
+<input type="date" id="date">
+</div>
+<div class="filter-item">
+<label>Shift</label>
+<select id="shift">
+<option>A</option>
+<option>B</option>
+<option>C</option>
+<option>Full Day</option>
+</select>
+</div>
+</div>
+<div class="filter-actions">
+<button onclick="generate()">Generate</button>
+<button onclick="downloadPDF()">Export PDF</button>
+</div>
+</div>
 </div>
 
-<!-- REPORT -->
 <div class="page" id="report">
 
 <!-- PDF HEADER -->
 <div id="pdfHeader" class="pdf-header">
-  <div class="pdf-header-inner">
-    <div><img src="Revomac.jpg" class="pdf-logo"></div>
-    <div class="pdf-center">
-      <h2>Revomac Industries</h2>
-      <div>Chandila, Ahmedabad, Gujarat</div>
-      <h3>Production Report</h3>
-    </div>
-    <div><img src="PlantwizLogo.png" class="pdf-logo"></div>
-  </div>
-  <div class="pdf-date">
-    Date :- <span id="pdfDate"></span>
-  </div>
+<div class="pdf-header-inner">
+<img src="Revomac.jpg" class="pdf-logo">
+<div class="pdf-center">
+<h2>Revomac Industries</h2>
+<div>Chandila, Ahmedabad, Gujarat</div>
+<h3>Production Report</h3>
+</div>
+<img src="PlantwizLogo.png" class="pdf-logo">
+</div>
+<div class="pdf-date">Date :- <span id="pdfDate"></span></div>
 </div>
 
 <!-- KPI -->
@@ -189,12 +185,12 @@ td{padding:10px;text-align:center;border-bottom:1px solid #e5e7eb}
 
 <!-- PDF FOOTER -->
 <div id="pdfFooter" class="pdf-footer">
-  <div class="remarks-title">Remarks:</div>
-  <div class="remarks-box"></div>
-  <div class="sign-row">
-    <div>Reviewed By:</div>
-    <div>Checked By:</div>
-  </div>
+<div>Remarks:</div>
+<div class="remarks-box"></div>
+<div class="sign-row">
+<div>Reviewed By:</div>
+<div>Checked By:</div>
+</div>
 </div>
 
 </div>
@@ -213,25 +209,21 @@ const KEYS=[
 
 function num(v){return Number(v)||0}
 
-/* IST SHIFT */
 function getShiftRange(dateStr, shift){
 const base=new Date(dateStr+"T00:00:00+05:30")
 const add=h=>new Date(base.getTime()+h*3600000)
-
 let s,e
 if(shift==="A"){s=add(0);e=add(8)}
 else if(shift==="B"){s=add(8);e=add(16)}
 else if(shift==="C"){s=add(16);e=add(24)}
 else{s=add(0);e=add(24)}
-
-return {startTs:s.getTime(),endTs=e.getTime()-1}
+return {startTs:s.getTime(),endTs:e.getTime()-1}
 }
 
 async function generate(){
 
 const date=document.getElementById("date").value
 const shift=document.getElementById("shift").value
-
 if(!date){alert("Select Date");return}
 
 const {startTs,endTs}=getShiftRange(date,shift)
@@ -243,17 +235,15 @@ const data=await res.json()
 
 let map={}
 Object.entries(data).forEach(([k,arr])=>{
-(arr||[]).forEach(p=>{
+arr.forEach(p=>{
 if(!map[p.ts])map[p.ts]={ts:p.ts}
 map[p.ts][k]=num(p.value)
 })
 })
 
 const rows=Object.values(map).sort((a,b)=>a.ts-b.ts)
-
 document.getElementById("table").innerHTML=""
 
-/* KPI */
 let prod=0,run=0,down=0,idleT=0,energy=0
 rows.forEach(r=>{
 prod+=r.Production_Hourly||0
@@ -269,7 +259,6 @@ downtime.innerText=down.toFixed(1)
 idle.innerText=idleT.toFixed(1)
 energy.innerText=energy.toFixed(1)
 
-/* TABLE */
 rows.forEach(r=>{
 document.getElementById("table").innerHTML += `
 <tr>
@@ -283,58 +272,20 @@ document.getElementById("table").innerHTML += `
 </tr>`;
 })
 
-/* DONUT */
-function donut(id,val){
-Plotly.newPlot(id,[{
-values:[val,100-val],
-type:"pie",
-hole:.75,
-marker:{colors:["#22c55e","#e5e7eb"]},
-textinfo:"none"
-}],{
-annotations:[{text:val+"%",showarrow:false,font:{size:16}}],
-showlegend:false,
-height:150,width:150,
-margin:{t:0,b:0,l:0,r:0}
-})
 }
 
-const avg=k=>rows.length?rows.reduce((s,r)=>s+num(r[k]),0)/rows.length:0
-
-donut("perf",avg("Performance_Hourly").toFixed(1))
-donut("avail",avg("Availability_Hourly").toFixed(1))
-donut("qual",avg("Quality_Hourly").toFixed(1))
-donut("oeeChart",avg("Oee_Hourly").toFixed(1))
-
-/* CHART */
-Plotly.newPlot("prodChart",[{
-x:rows.map(r=>new Date(r.ts)),
-y:rows.map(r=>r.Production_Hourly),
-mode:"lines+markers",
-line:{color:"#2D8A6D"}
-}])
-
-Plotly.newPlot("energyChart",[{
-x:rows.map(r=>new Date(r.ts)),
-y:rows.map(r=>r.Consumption_Hourly),
-mode:"lines+markers",
-line:{color:"#f59e0b"}
-}])
-
-}
-
-/* PDF */
 async function downloadPDF(){
 
 const { jsPDF } = window.jspdf;
 
-document.getElementById("pdfDate").innerText=document.getElementById("date").value;
+document.getElementById("pdfDate").innerText =
+document.getElementById("date").value;
 
 document.body.classList.add("pdf-mode");
 
 const element = document.getElementById("report");
 
-await new Promise(r => setTimeout(r, 100));
+await new Promise(r => setTimeout(r, 200));
 
 const canvas = await html2canvas(element, {
 scale:3,
@@ -342,16 +293,14 @@ useCORS:true,
 backgroundColor:"#ffffff"
 });
 
-const imgData = canvas.toDataURL("image/jpeg", 0.9);
+const imgData = canvas.toDataURL("image/jpeg",0.9);
 
-const pdf = new jsPDF("p", "mm", "a4");
-
+const pdf = new jsPDF("p","mm","a4");
 const pageWidth = pdf.internal.pageSize.getWidth();
 const imgProps = pdf.getImageProperties(imgData);
 const pdfHeight = (imgProps.height * pageWidth) / imgProps.width;
 
-pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, pdfHeight);
-
+pdf.addImage(imgData,"JPEG",0,0,pageWidth,pdfHeight);
 pdf.save("Revomac_Report.pdf");
 
 document.body.classList.remove("pdf-mode");
