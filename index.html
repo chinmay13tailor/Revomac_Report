@@ -311,6 +311,9 @@ y:rows.map(r=>r.Consumption_Hourly),
 mode:"lines+markers",
 line:{color:"#f59e0b"}
 }])  
+setTimeout(()=>{
+window.dispatchEvent(new Event('resize'));
+},300);
 
 }
 
