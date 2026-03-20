@@ -82,6 +82,12 @@ background:#fff;border-radius:14px;padding:16px;
 box-shadow:0 6px 14px rgba(0,0,0,0.05);
 border-top:4px solid #2D8A6D;
 }
+.unit{
+font-size:13px;
+color:#64748b;
+margin-left:4px;
+font-weight:500;
+}
 .kpi-title{font-size:13px;color:#64748b}
 .kpi-value{font-size:26px;font-weight:700}
 
@@ -149,12 +155,29 @@ td{padding:10px;text-align:center;border-bottom:1px solid #e5e7eb}
 <div class="page" id="report">
 
 <!-- KPI -->
-<div class="kpi-row">
-<div class="kpi"><div class="kpi-title">Total Bricks Produced</div><div id="production" class="kpi-value">0</div></div>
-<div class="kpi"><div class="kpi-title">Runtime</div><div id="runtime" class="kpi-value">0</div></div>
-<div class="kpi"><div class="kpi-title">Downtime</div><div id="downtime" class="kpi-value">0</div></div>
-<div class="kpi"><div class="kpi-title">Idle Time</div><div id="idle" class="kpi-value">0</div></div>
-<div class="kpi"><div class="kpi-title">Energy</div><div id="energy" class="kpi-value">0</div></div>
+<div class="kpi">
+  <div class="kpi-title">Total Bricks Produced</div>
+  <div class="kpi-value"><span id="production">0</span> <span class="unit">Bricks</span></div>
+</div>
+
+<div class="kpi">
+  <div class="kpi-title">Runtime</div>
+  <div class="kpi-value"><span id="runtime">0</span> <span class="unit">min</span></div>
+</div>
+
+<div class="kpi">
+  <div class="kpi-title">Downtime</div>
+  <div class="kpi-value"><span id="downtime">0</span> <span class="unit">min</span></div>
+</div>
+
+<div class="kpi">
+  <div class="kpi-title">Idle Time</div>
+  <div class="kpi-value"><span id="idle">0</span> <span class="unit">min</span></div>
+</div>
+
+<div class="kpi">
+  <div class="kpi-title">Energy</div>
+  <div class="kpi-value"><span id="energy">0</span> <span class="unit">kWh</span></div>
 </div>
 
 <!-- PERFORMANCE -->
