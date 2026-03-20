@@ -338,13 +338,31 @@ line:{color:"#f59e0b"}
 
 /* PDF */
 async function downloadPDF(){
-const {jsPDF}=window.jspdf
-const canvas=await html2canvas(document.getElementById("report"),{scale:1})
-const img=canvas.toDataURL("image/jpeg",0.7)
 
-const pdf=new jsPDF()
-pdf.addImage(img,"JPEG",0,0,210,canvas.height*210/canvas.width)
-pdf.save("Revomac_Report.pdf")
+const { jsPDF } = window.jspdf;
+
+const element = document.getElementById("report");
+
+/* HIGH QUALITY CANVAS */
+const canvas = await html2canvas(element, {
+  scale: 3,           // 🔥 increase clarity
+  useCORS: true,
+  image quality: 1.0,
+  backgroundColor: "#ffffff"
+});
+
+/* COMPRESSED IMAGE */
+const imgData = canvas.toDataURL("image/jpeg", 0.9);
+
+const pdf = new jsPDF("p", "mm", "a4");
+
+const pageWidth = pdf.internal.pageSize.getWidth();
+const imgProps = pdf.getImageProperties(imgData);
+const pdfHeight = (imgProps.height * pageWidth) / imgProps.width;
+
+pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, pdfHeight);
+
+pdf.save("Revomac_Report.pdf");
 }
 
 document.getElementById("date").value=new Date().toISOString().split("T")[0]
