@@ -50,8 +50,7 @@ justify-content:space-between;
 margin-top:20px;
 }
 
-/* ===== ORIGINAL CSS (UNCHANGED) ===== */
-
+/* ORIGINAL CSS */
 .filter-wrapper{padding:20px 20px 0 20px;}
 .filter-box{
 background:#ffffff;border-radius:14px;padding:16px 20px;
@@ -135,7 +134,7 @@ td{padding:10px;text-align:center;border-bottom:1px solid #e5e7eb}
 <!-- REPORT -->
 <div class="page" id="report">
 
-<!-- ===== PDF HEADER ===== -->
+<!-- PDF HEADER -->
 <div id="pdfHeader" class="pdf-header">
   <div class="pdf-header-inner">
     <div><img src="Revomac.jpg" class="pdf-logo"></div>
@@ -188,7 +187,7 @@ td{padding:10px;text-align:center;border-bottom:1px solid #e5e7eb}
 <div class="chart-card"><div id="energyChart"></div></div>
 </div>
 
-<!-- ===== PDF FOOTER ===== -->
+<!-- PDF FOOTER -->
 <div id="pdfFooter" class="pdf-footer">
   <div class="remarks-title">Remarks:</div>
   <div class="remarks-box"></div>
@@ -201,8 +200,6 @@ td{padding:10px;text-align:center;border-bottom:1px solid #e5e7eb}
 </div>
 
 <script>
-
-/* ===== YOUR ORIGINAL JS — UNTOUCHED ===== */
 
 const DEVICE_ID="34195550-2103-11f1-92b2-1da25bcc708d";
 const API="https://plantwiz.pimateck.in/api";
@@ -231,19 +228,108 @@ return {startTs:s.getTime(),endTs=e.getTime()-1}
 }
 
 async function generate(){
-/* SAME AS YOUR CODE */
+
+const date=document.getElementById("date").value
+const shift=document.getElementById("shift").value
+
+if(!date){alert("Select Date");return}
+
+const {startTs,endTs}=getShiftRange(date,shift)
+
+const res=await fetch(`${API}/plugins/telemetry/DEVICE/${DEVICE_ID}/values/timeseries?keys=${KEYS.join(",")}&startTs=${startTs}&endTs=${endTs}&limit=1000`,
+{headers:{"X-Authorization":"Bearer "+TOKEN}})
+
+const data=await res.json()
+
+let map={}
+Object.entries(data).forEach(([k,arr])=>{
+(arr||[]).forEach(p=>{
+if(!map[p.ts])map[p.ts]={ts:p.ts}
+map[p.ts][k]=num(p.value)
+})
+})
+
+const rows=Object.values(map).sort((a,b)=>a.ts-b.ts)
+
+document.getElementById("table").innerHTML=""
+
+/* KPI */
+let prod=0,run=0,down=0,idleT=0,energy=0
+rows.forEach(r=>{
+prod+=r.Production_Hourly||0
+run+=r.Runtime_Hourly||0
+down+=r.Downtime_Hourly||0
+idleT+=r.Idletime_Hourly||0
+energy+=r.Consumption_Hourly||0
+})
+
+production.innerText=prod.toFixed(0)
+runtime.innerText=run.toFixed(1)
+downtime.innerText=down.toFixed(1)
+idle.innerText=idleT.toFixed(1)
+energy.innerText=energy.toFixed(1)
+
+/* TABLE */
+rows.forEach(r=>{
+document.getElementById("table").innerHTML+=`
+<tr>
+<td>${new Date(r.ts).toLocaleTimeString("en-IN")}</td>
+<td>${r.Production_Hourly||0}</td>
+<td>${r.Runtime_Hourly||0}</td>
+<td>${r.Downtime_Hourly||0}</td>
+<td>${r.Idletime_Hourly||0}</td>
+<td>${r.Consumption_Hourly||0}</td>
+<td>${r.Performance_Hourly||0}%</td>
+</tr>`
+})
+
+/* DONUT */
+function donut(id,val){
+Plotly.newPlot(id,[{
+values:[val,100-val],
+type:"pie",
+hole:.75,
+marker:{colors:["#22c55e","#e5e7eb"]},
+textinfo:"none"
+}],{
+annotations:[{text:val+"%",showarrow:false,font:{size:16}}],
+showlegend:false,
+height:150,width:150,
+margin:{t:0,b:0,l:0,r:0}
+})
 }
 
-/* ===== ONLY PDF UPDATED ===== */
+const avg=k=>rows.length?rows.reduce((s,r)=>s+num(r[k]),0)/rows.length:0
+
+donut("perf",avg("Performance_Hourly").toFixed(1))
+donut("avail",avg("Availability_Hourly").toFixed(1))
+donut("qual",avg("Quality_Hourly").toFixed(1))
+donut("oeeChart",avg("Oee_Hourly").toFixed(1))
+
+/* CHART */
+Plotly.newPlot("prodChart",[{
+x:rows.map(r=>new Date(r.ts)),
+y:rows.map(r=>r.Production_Hourly),
+mode:"lines+markers",
+line:{color:"#2D8A6D"}
+}])
+
+Plotly.newPlot("energyChart",[{
+x:rows.map(r=>new Date(r.ts)),
+y:rows.map(r=>r.Consumption_Hourly),
+mode:"lines+markers",
+line:{color:"#f59e0b"}
+}])
+
+}
+
+/* PDF */
 async function downloadPDF(){
 
 const { jsPDF } = window.jspdf;
 
-/* SET DATE */
-document.getElementById("pdfDate").innerText =
-document.getElementById("date").value;
+document.getElementById("pdfDate").innerText=document.getElementById("date").value;
 
-/* ENABLE PDF MODE */
 document.body.classList.add("pdf-mode");
 
 const element = document.getElementById("report");
@@ -268,7 +354,6 @@ pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, pdfHeight);
 
 pdf.save("Revomac_Report.pdf");
 
-/* RESET */
 document.body.classList.remove("pdf-mode");
 }
 
