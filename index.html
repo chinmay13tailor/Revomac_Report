@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Revomac Production & Energy Report</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+<style>
+body{font-family:"Segoe UI",sans-serif;background:#f3f4f6;color:#1e293b;margin:0}
+.page{padding:1.5rem}
+.card{background:#fff;border-radius:12px;padding:1.2rem 1.5rem;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.card h2{display:flex;align-items:center;gap:.6rem;font-size:1.1rem;color:#1e3a8a;margin:0 0 1rem}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem}
+.kpi{background:#fff;border-radius:10px;padding:1rem;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.kpi h3{margin:0;font-size:.95rem;color:#475569}
+.kpi .value{font-size:1.4rem;font-weight:700;margin-top:.3rem;color:#2563eb}
+
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden}
+th,td{padding:.7rem;text-align:center;border-bottom:1px solid #e2e8f0}
+th{background:#f1f5f9}
+
+#trendChart{height:380px}
+</style>
+</head>
+
+<body>
+<div class="page">
+
+<div class="card">
+<h2>📊 KPI Summary</h2>
+<div class="kpi-row">
+<div class="kpi"><h3>Total Bricks Produced</h3><div class="value" id="production">0</div></div>
+<div class="kpi"><h3>Runtime (min)</h3><div class="value" id="runtime">0</div></div>
+<div class="kpi"><h3>Downtime (min)</h3><div class="value" id="downtime">0</div></div>
+<div class="kpi"><h3>Idle Time (min)</h3><div class="value" id="idle">0</div></div>
+<div class="kpi"><h3>Energy (kWh)</h3><div class="value" id="energy">0</div></div>
+<div class="kpi"><h3>OEE (%)</h3><div class="value" id="oee">0%</div></div>
+</div>
+</div>
+
+<div class="card">
+<h2>⚙️ Performance KPIs</h2>
+<div id="perfDonut"></div>
+<div id="availDonut"></div>
+<div id="qualDonut"></div>
+</div>
+
+<div class="card">
+<h2>⏱ Hourly Data</h2>
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th>Production (Nos)</th>
+<th>Runtime</th>
+<th>Downtime</th>
+<th>Idle</th>
+<th>Energy</th>
+<th>OEE</th>
+</tr>
+</thead>
+<tbody id="table"></tbody>
+</table>
+</div>
+
+<div class="card">
+<h2>📈 Production & Energy Trend</h2>
+<div id="trendChart"></div>
+</div>
+
+</div>
+
+<script>
+
+const CONFIG={
+API_BASE_URL:"https://plantwiz.pimateck.in/api",
+KEYS:[
+"Production_Hourly",
+"Consumption_Hourly",
+"Runtime_Hourly",
+"Downtime_Hourly",
+"Idletime_Hourly",
+"Oee_Hourly",
+"Performance_Hourly",
+"Availability_Hourly",
+"Quality_Hourly"
+],
+DEFAULT_DEVICE_ID:"34195550-2103-11f1-92b2-1da25bcc708d"
+};
+
+const DEVICE_ID = CONFIG.DEFAULT_DEVICE_ID;
+const JWT = new URLSearchParams(location.search).get("token") || "";
+
+function num(v){return Number(v)||0;}
+
+async function load(){
+const res=await fetch(`${CONFIG.API_BASE_URL}/plugins/telemetry/DEVICE/${DEVICE_ID}/values/timeseries?keys=${CONFIG.KEYS.join(",")}&limit=1000`,{
+headers:{"X-Authorization":`Bearer ${JWT}`}
+});
+const data=await res.json();
+
+const rows=[];
+Object.values(data).forEach(arr=>{
+arr.forEach(p=>{
+let r=rows.find(x=>x.ts==p.ts);
+if(!r){r={ts:p.ts};rows.push(r);}
+r[p.key]=num(p.value);
+});
+});
+
+render(rows);
+}
+
+function render(rows){
+
+let prod=0,run=0,down=0,idleT=0,energy=0,oee=0;
+
+rows.forEach(r=>{
+prod+=num(r.Production_Hourly);
+run+=num(r.Runtime_Hourly);
+down+=num(r.Downtime_Hourly);
+idleT+=num(r.Idletime_Hourly);
+energy+=num(r.Consumption_Hourly);
+oee+=num(r.Oee_Hourly);
+});
+
+document.getElementById("production").innerText=prod.toFixed(0);
+document.getElementById("runtime").innerText=run.toFixed(1);
+document.getElementById("downtime").innerText=down.toFixed(1);
+document.getElementById("idle").innerText=idleT.toFixed(1);
+document.getElementById("energy").innerText=energy.toFixed(1);
+document.getElementById("oee").innerText=(oee/rows.length).toFixed(1)+"%";
+
+/* TABLE */
+const tb=document.getElementById("table");
+rows.forEach(r=>{
+const tr=document.createElement("tr");
+tr.innerHTML=`
+<td>${new Date(r.ts).toLocaleTimeString()}</td>
+<td>${r.Production_Hourly||0}</td>
+<td>${r.Runtime_Hourly||0}</td>
+<td>${r.Downtime_Hourly||0}</td>
+<td>${r.Idletime_Hourly||0}</td>
+<td>${r.Consumption_Hourly||0}</td>
+<td>${r.Oee_Hourly||0}</td>
+`;
+tb.appendChild(tr);
+});
+
+/* CHART */
+Plotly.newPlot("trendChart",[
+{
+x:rows.map(r=>new Date(r.ts)),
+y:rows.map(r=>r.Production_Hourly),
+type:"bar",
+name:"Production (Nos)"
+},
+{
+x:rows.map(r=>new Date(r.ts)),
+y:rows.map(r=>r.Consumption_Hourly),
+type:"bar",
+name:"Energy (kWh)"
+}
+]);
+
+}
+
+load();
+
+</script>
+
+</body>
+</html>
