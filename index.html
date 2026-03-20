@@ -236,7 +236,7 @@ if(!date){alert("Select Date");return}
 
 const {startTs,endTs}=getShiftRange(date,shift)
 
-const res=await fetch(`${API}/plugins/telemetry/DEVICE/${DEVICE_ID}/values/timeseries?keys=${KEYS.join(",")}&startTs=${startTs}&endTs=${endTs}&limit=1000`,
+const res = await fetch(`${API}/plugins/telemetry/DEVICE/${DEVICE_ID}/values/timeseries?keys=${KEYS.join(",")}&startTs=${startTs}&endTs=${endTs}&limit=1000`,
 {headers:{"X-Authorization":"Bearer "+TOKEN}})
 
 const data=await res.json()
@@ -271,7 +271,7 @@ energy.innerText=energy.toFixed(1)
 
 /* TABLE */
 rows.forEach(r=>{
-document.getElementById("table").innerHTML+=`
+document.getElementById("table").innerHTML += `
 <tr>
 <td>${new Date(r.ts).toLocaleTimeString("en-IN")}</td>
 <td>${r.Production_Hourly||0}</td>
@@ -280,7 +280,7 @@ document.getElementById("table").innerHTML+=`
 <td>${r.Idletime_Hourly||0}</td>
 <td>${r.Consumption_Hourly||0}</td>
 <td>${r.Performance_Hourly||0}%</td>
-</tr>`
+</tr>`;
 })
 
 /* DONUT */
